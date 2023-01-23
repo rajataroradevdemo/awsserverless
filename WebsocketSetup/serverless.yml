@@ -1,0 +1,121 @@
+service: websocket-setup
+
+useDotenv: true
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  region: ${env:REGION, "eu-west-2"}
+  stage: ${opt:stage, "dev"}
+  runtime: python3.9
+  memorySize: 1024
+  timeout: 30
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - { "Fn::GetAtt": [ "ConnectionManagement", "Arn" ] }
+            - {
+              "Fn::Join":
+                [
+                  "/",
+                  [
+                    { "Fn::GetAtt": [ "ConnectionManagement", "Arn" ] },
+                    "index",
+                    "UserIdIndex",
+                  ],
+                ],
+            }
+
+resources:
+  Resources:
+    ConnectionManagement:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: connection-manager
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: connection_id
+            AttributeType: S
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connection_id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: user_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
+
+  Outputs:
+    WebSocketDomain:
+      Value:
+        {
+          "Fn::Join":
+            [
+              "",
+              [
+                { "Ref": "WebsocketsApi" },
+                ".execute-api.${self:provider.region}.amazonaws.com",
+              ],
+            ],
+        }
+    ConnectionManagerDDB:
+      Value:
+        { "Fn::GetAtt": [ "ConnectionManagement", "Arn" ] }
+    ConnectionManagerDDBIndex:
+      Value:
+        {
+          "Fn::Join":
+            [
+              "/",
+              [
+                { "Fn::GetAtt": [ "ConnectionManagement", "Arn" ] },
+                "index",
+                "UserIdIndex",
+              ],
+            ],
+        }
+
+functions:
+  rtc_handler:
+    handler: src/event_handler.lambda_handler
+    events:
+      - websocket:
+          route: $connect
+          routeResponseSelectionExpression: $default
+      - websocket:
+          route: $disconnect
+          routeResponseSelectionExpression: $default
+      - websocket:
+          route: $default
+          routeResponseSelectionExpression: $default
+    websocket:
+      level: INFO
+
+  rtc_message_publisher:
+    handler: src/message_publisher.lambda_handler
+    name: websocket-message-publisher
+    environment:
+#      WEBSOCKET_DOMAIN: g0m7cr37nf.execute-api.eu-west-2.amazonaws.com
+      WEBSOCKET_DOMAIN:
+        {
+          "Fn::Join":
+            [
+              "",
+              [
+                { "Ref": "WebsocketsApi" },
+                ".execute-api.${self:provider.region}.amazonaws.com",
+              ],
+            ],
+        }

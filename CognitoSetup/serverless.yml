@@ -1,0 +1,22 @@
+service: auth-setup
+useDotenv: true
+
+provider:
+  name: aws
+  region: ${opt:region, "eu-west-2"}
+  stage: ${opt:stage, "dev"}
+
+resources:
+  Resources:
+    CognitoUserPool: ${file(./CognitoUserPool.yml)}
+    CognitoUserPoolClient: ${file(./CognitoUserPoolClient.yml)}
+
+  Outputs:
+    CognitoUserPoolARN:
+      Value:
+        Fn::GetAtt:
+          - CognitoUserPool
+          - Arn
+    CognitoUserPoolId:
+      Value:
+        Ref: CognitoUserPool

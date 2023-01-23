@@ -1,0 +1,148 @@
+service: eventbridge-setup
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: ${env:REGION, "eu-west-2"}
+  stage: ${opt:stage, "dev"}
+  runtime: python3.9
+  memorySize: 1024
+  timeout: 30
+  environment:
+    EVENT_BUS_NAME: ${self:custom.EVENT_BUS_NAME}
+  apiGateway:
+    # Replace the below with actual API GW IDs
+    restApiId: n39qrnkqc9
+    restApiRootResourceId: 14vm1rmn9i
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "events:*"
+          Resource: "arn:aws:events:${aws:region}:${aws:accountId}:event-bus/${self:custom.EVENT_BUS_NAME}"
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - ${self:custom.CONNECTION_MANAGER_DDB}
+            - ${self:custom.CONNECTION_MANGER_DDB_INDEX}
+        - Effect: "Allow"
+          Action:
+            - execute-api:ManageConnections
+          Resource:
+            - arn:aws:execute-api:*:*:*/@connections/*
+
+custom:
+  EVENT_BUS_NAME: food-app-notifications
+  WEBSOCKET_STACK_NAME: websocket-setup-dev
+  WEBSOCKET_DOMAIN: ${cf:websocket-setup-dev.WebSocketDomain}
+  CONNECTION_MANAGER_DDB: ${cf:websocket-setup-dev.ConnectionManagerDDB}
+  CONNECTION_MANGER_DDB_INDEX: ${cf:websocket-setup-dev.ConnectionManagerDDBIndex}
+
+resources:
+  Resources:
+    EventBridgeBus:
+      Type: AWS::Events::EventBus
+      Properties:
+        Name: ${self:custom.EVENT_BUS_NAME}
+    OrderPlacedRule:
+      Type: AWS::Events::Rule
+      DependsOn: "EventBridgeBus"
+      Properties:
+        Name: order_placed
+        EventBusName: ${self:custom.EVENT_BUS_NAME}
+        EventPattern:
+          source:
+            - custom.food_app
+          detail-type:
+            - order_placed
+        State: "ENABLED"
+        Targets:
+          - Arn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:restaurants_service
+            Id: "RestaurantsService"
+    OrderCompletedRule:
+      Type: AWS::Events::Rule
+      DependsOn: "EventBridgeBus"
+      Properties:
+        Name: order_accepted
+        EventBusName: ${self:custom.EVENT_BUS_NAME}
+        EventPattern:
+          source:
+            - custom.food_app
+          detail-type:
+            - order_accepted
+        State: "ENABLED"
+        Targets:
+          - Arn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:notification_service
+            Id: "NotificationService"
+          - Arn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:delivery_service
+            Id: "DeliveryService"
+    OrderDelivered:
+      Type: AWS::Events::Rule
+      DependsOn: "EventBridgeBus"
+      Properties:
+        Name: order_delivered
+        EventBusName: ${self:custom.EVENT_BUS_NAME}
+        EventPattern:
+          source:
+            - custom.food_app
+          detail-type:
+            - order_delivered
+        State: "ENABLED"
+        Targets:
+          - Arn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:notification_service
+            Id: "NotificationService"
+    NotificationsPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Ref: "NotificationUnderscoreserviceLambdaFunction"
+        Action: "lambda:InvokeFunction"
+        Principal: "events.amazonaws.com"
+    RestaurantsPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Ref: "RestaurantsUnderscoreserviceLambdaFunction"
+        Action: "lambda:InvokeFunction"
+        Principal: "events.amazonaws.com"
+    DeliveryPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Ref: "DeliveryUnderscoreserviceLambdaFunction"
+        Action: "lambda:InvokeFunction"
+        Principal: "events.amazonaws.com"
+
+
+functions:
+  notification_service:
+    handler: notifications.lambda_function
+    name: notification_service
+    environment:
+      WEBSOCKET_DOMAIN: ${self:custom.WEBSOCKET_DOMAIN}
+  restaurants_service:
+    handler: restaurants.lambda_function
+    name: restaurants_service
+  delivery_service:
+    handler: delivery.lambda_function
+    name: delivery_service
+  orders_service:
+    handler: orders.lambda_handler
+    name: orders_service
+    events:
+      - http:
+          path: /create-order
+          method: post
+          cors: true
+          integration: lambda
+          request:
+            passThrough: WHEN_NO_MATCH
+            template:
+              application/json: '$input.json("$")'

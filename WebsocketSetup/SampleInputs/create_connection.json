@@ -1,0 +1,48 @@
+{
+	"headers": {
+		"Host": "g0m7cr37nf.execute-api.eu-west-2.amazonaws.com",
+		"Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
+		"Sec-WebSocket-Key": "lnIPYpPGQaFqO2V8aw3aQA==",
+		"Sec-WebSocket-Version": "13",
+		"user_id": "06e6331b-5d12-4cda-a313-dc7a520df615",
+		"X-Amzn-Trace-Id": "Root=1-636c819d-75dc90d8475373c656cd77e1",
+		"X-Forwarded-For": "49.37.214.66",
+		"X-Forwarded-Port": "443",
+		"X-Forwarded-Proto": "https"
+	},
+	"multiValueHeaders": {
+		"Host": ["g0m7cr37nf.execute-api.eu-west-2.amazonaws.com"],
+		"Sec-WebSocket-Extensions": ["permessage-deflate; client_max_window_bits"],
+		"Sec-WebSocket-Key": ["lnIPYpPGQaFqO2V8aw3aQA=="],
+		"Sec-WebSocket-Version": ["13"],
+		"user_id": ["06e6331b-5d12-4cda-a313-dc7a520df615"],
+		"X-Amzn-Trace-Id": ["Root=1-636c819d-75dc90d8475373c656cd77e1"],
+		"X-Forwarded-For": ["49.37.214.66"],
+		"X-Forwarded-Port": ["443"],
+		"X-Forwarded-Proto": ["https"]
+	},
+	"queryStringParameters": {
+		"user_id": "06e6331b-5d12-4cda-a313-dc7a520df615"
+	},
+	"multiValueQueryStringParameters": {
+		"user_id": ["06e6331b-5d12-4cda-a313-dc7a520df615"]
+	},
+	"requestContext": {
+		"routeKey": "$connect",
+		"eventType": "CONNECT",
+		"extendedRequestId": "bXkwsHzTLPEFvSg=",
+		"requestTime": "10/Nov/2022:04:44:13 +0000",
+		"messageDirection": "IN",
+		"stage": "dev",
+		"connectedAt": 1668055453856,
+		"requestTimeEpoch": 1668055453857,
+		"identity": {
+			"sourceIp": "49.37.214.66"
+		},
+		"requestId": "bXkwsHzTLPEFvSg=",
+		"domainName": "g0m7cr37nf.execute-api.eu-west-2.amazonaws.com",
+		"connectionId": "bXkwsdY8rPECIVg=",
+		"apiId": "g0m7cr37nf"
+	},
+	"isBase64Encoded": "False"
+}

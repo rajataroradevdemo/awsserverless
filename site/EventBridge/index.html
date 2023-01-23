@@ -1,0 +1,649 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
+    
+    
+      
+        <title>EventBridge - ACD 2022 Serverless Workshop</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.20d9efc8.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ffa724">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="preference" data-md-color-primary="orange" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#setting-up-eventbridge" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ACD 2022 Serverless Workshop" class="md-header__button md-logo" aria-label="ACD 2022 Serverless Workshop" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ACD 2022 Serverless Workshop
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              EventBridge
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ACD 2022 Serverless Workshop" class="md-nav__button md-logo" aria-label="ACD 2022 Serverless Workshop" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    ACD 2022 Serverless Workshop
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Build your own Serverless Food Delivery App in 3 hours!
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          EventBridge
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        EventBridge
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-eventbridge" class="md-nav__link">
+    Setting up EventBridge
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up EventBridge">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#steps-to-create-an-event-bus" class="md-nav__link">
+    Steps to create an Event Bus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps-to-create-event-rules" class="md-nav__link">
+    Steps to create Event Rules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-lambda-function-config" class="md-nav__link">
+    Update Lambda Function Config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-using-serverless-framework" class="md-nav__link">
+    Deploy using Serverless Framework
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WebSockets/" class="md-nav__link">
+        WebSockets
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dynamodb/" class="md-nav__link">
+        Dynamodb
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../uiIntegration/" class="md-nav__link">
+        UI Integration
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-eventbridge" class="md-nav__link">
+    Setting up EventBridge
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting up EventBridge">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#steps-to-create-an-event-bus" class="md-nav__link">
+    Steps to create an Event Bus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps-to-create-event-rules" class="md-nav__link">
+    Steps to create Event Rules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-lambda-function-config" class="md-nav__link">
+    Update Lambda Function Config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    Testing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-using-serverless-framework" class="md-nav__link">
+    Deploy using Serverless Framework
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>EventBridge</h1>
+
+<h2 id="setting-up-eventbridge">Setting up EventBridge</h2>
+<p>EventBridge has become an integral part of Serverless applications. In this section we will see how to create Event bus, Event Rules and integrate them with the following microservices:</p>
+<ol>
+<li><a href="../EventBridgeSetup/restaurants.py"><code>restaurants_service</code></a> - this microservice simulates the functionality of a restaurant, accepts orders and publishes a message (<code>Order Accepted</code>) to the event bus, which will be picked up the delivery and notification microservices</li>
+<li><a href="../EventBridgeSetup/delivery.py"><code>delivery service</code></a> - this microservice simulates the functionality of delivering the order to the customer's location, and publishes a message (<code>Order Delivered</code>) to the event bus, which will be picked up the notification microservice</li>
+<li><a href="../EventBridgeSetup/notifications.py"><code>notifications_service</code></a> - this microservice will help in sending WebSocket messages to the client using the API Gateway client of <code>boto3</code></li>
+</ol>
+<p>Create the above 3 lambda functions, which will be integrated with event rules in the following steps</p>
+<h3 id="steps-to-create-an-event-bus">Steps to create an Event Bus</h3>
+<p>Navigate to the <code>EventBridge</code> service on the AWS console and perform the following steps to create an event bus:</p>
+<ol>
+<li>Select <code>Event buses</code> on the left nav bar</li>
+<li>Click on <code>Create event bus</code> to create a new event bus and provide a name for the same. Ex <code>food-app-bus</code> and leave the defaults for the rest of the things</li>
+</ol>
+<h3 id="steps-to-create-event-rules">Steps to create Event Rules</h3>
+<p>As a part of our application, we will be creating 3 rules:</p>
+<ol>
+<li><code>OrderPlacedRule</code> - this rule will trigger the <code>restaurants</code> microservice to notify the restaurant that an order has been placed and the restaurant needs to accept and process the same.</li>
+<li><code>OrderAcceptedRule</code> - this rule will trigger the <code>delivery</code> microservice to start the delivery partner assignment and the delivery process. It will also trigger the <code>notifications</code> microservice to deliver the <code>Order Accepted</code> message to the client</li>
+<li><code>OrderDeliveredRule</code> - this rule will trigger the <code>notifications</code> microservice to delivery <code>Order Delivered</code> message to the client</li>
+</ol>
+<p>Navigate to the <code>Event Rules</code> section on the left nav bar of the <code>EventBridge</code> console and perform the following steps to create event rules:</p>
+<p>Select the event bus that was created in the previous section and click on <code>Create Rule</code> to create the following rules:</p>
+<ol>
+<li>Step 1 (Define rule detail) - Provide a name for the rule, <code>order_placed</code> and click on <code>Next</code></li>
+<li>Step 2 (Build event pattern):<ol>
+<li>Select <code>Other</code> as the <code>Event Source</code> to indicate that custom events will be used to push messages to the bus</li>
+<li>Add the following JSON to the <code>Event Pattern</code> section and click on <code>Next</code>:
+     <code>json
+     {
+       "detail-type": ["order_placed"],
+       "source": ["custom.food_app"]
+     }</code></li>
+</ol>
+</li>
+<li>Step 3 (Select Targets):<ol>
+<li>Select <code>AWS service</code> as the target and chose <code>Lambda function</code> from the dropdown list</li>
+<li>Select the <code>restaurants_service</code> lambda function that was created above and click on <code>Next</code></li>
+</ol>
+</li>
+<li>Step 4 (Configure Tags) - you can provide any tags if needed or can skip and click on <code>Next</code></li>
+<li>Step 5 (Review and Create) - review all the configurations created in the previous steps and click on <code>Create Rule</code></li>
+</ol>
+<p>Repeat the above steps to create 2 more rules:</p>
+<p><code>Order Accepted Rule</code> with the following config:</p>
+<ol>
+<li><code>Event Pattern</code>:</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;detail-type&quot;: [&quot;order_accepted&quot;],
+  &quot;source&quot;: [&quot;custom.food_app&quot;]
+}
+</code></pre>
+<ol>
+<li>Two target lambda functions - <code>delivery_service</code> and <code>notification_service</code></li>
+</ol>
+<p><code>Order Delivered Rule</code> with the following config:</p>
+<ol>
+<li><code>Event Pattern</code>:</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;detail-type&quot;: [&quot;order_delivered&quot;],
+  &quot;source&quot;: [&quot;custom.food_app&quot;]
+}
+</code></pre>
+<ol>
+<li>Target lambda - <code>notifications_service</code></li>
+</ol>
+<h3 id="update-lambda-function-config">Update Lambda Function Config</h3>
+<p>Create the following 2 environment variables in the <code>Configuration</code> section:</p>
+<ol>
+<li><code>WEBSOCKET_DOMAIN</code> - the websocket domain created as a part of the WebSockets section</li>
+<li><code>EVENT_BUS_NAME</code> - the name of the event bus created in the above step</li>
+</ol>
+<p>Update the lambda function's IAM role to provide the following permissions by navigating to the IAM console, selecting the specific lambda's role and editing the policy and clicking on <code>Add additional permissions</code> at every following step:</p>
+<ol>
+<li>Select <code>EventBridge</code>, select all actions and all resources. This is to publish messages to the event bus so that other microservices can pick it up and proceed further</li>
+<li>Select <code>DynamoDB</code>, select all actions and all resources. This is to update the DynamoDB table with the appropriate order status</li>
+<li>Select <code>API Gateway</code>, select all actions and all resources. This is used to send WebSocket messages back to the client</li>
+</ol>
+<p>Or, you can simply update the IAM policy with the following JSON:</p>
+<pre><code class="language-json">{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Sid&quot;: &quot;VisualEditor0&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;dynamodb:PutItem&quot;,
+                &quot;dynamodb:DeleteItem&quot;,
+                &quot;dynamodb:GetItem&quot;,
+                &quot;dynamodb:Query&quot;,
+                &quot;dynamodb:UpdateItem&quot;
+            ],
+            &quot;Resource&quot;: &quot;*&quot;
+        },
+        {
+            &quot;Sid&quot;: &quot;VisualEditor1&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;logs:CreateLogStream&quot;,
+                &quot;execute-api:ManageConnections&quot;,
+                &quot;logs:CreateLogGroup&quot;
+            ],
+            &quot;Resource&quot;: &quot;*&quot;
+        },
+        {
+            &quot;Sid&quot;: &quot;VisualEditor2&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: &quot;logs:PutLogEvents&quot;,
+            &quot;Resource&quot;: &quot;*&quot;
+        },
+        {
+            &quot;Sid&quot;: &quot;VisualEditor3&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: &quot;events:*&quot;,
+            &quot;Resource&quot;: &quot;*&quot;
+        }
+    ]
+}
+</code></pre>
+<h3 id="testing">Testing</h3>
+<p>Navigate to the <code>Event Bus</code> on the left nav bar and click on <code>Send Events</code> and:</p>
+<ol>
+<li>Select the event bus created above</li>
+<li>Add the event source - <code>custom.food_app</code></li>
+<li>Add the detail type as <code>order_placed</code></li>
+<li>Add the following event detail:</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;order_id&quot;: &quot;0ff5e0c8-7c95-49be-ac84-771d47e1d92a&quot;,
+  &quot;order_status&quot;: &quot;order_placed&quot;,
+  &quot;user_id&quot;: &quot;68a0f215-8453-45be-a418-5b0b1c94b456&quot;
+}
+</code></pre>
+<h3 id="deploy-using-serverless-framework">Deploy using Serverless Framework</h3>
+<p>If you want to deploy all the resources for the EventBridge segment, please use the following resource:</p>
+<pre><code class="language-commandline">cd EventBridgeSetup
+serverless deploy --region eu-west-2
+</code></pre>
+<p>And the above command would create the following services:</p>
+<ol>
+<li>4 lambda functions to simulate 4 microservices - orders, restaurants, delivery, notifications</li>
+<li>Event bus</li>
+<li>3 Event rules</li>
+<li>Permission for EventBridge to trigger the targets</li>
+</ol>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Build your own Serverless Food Delivery App in 3 hours!" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Build your own Serverless Food Delivery App in 3 hours!
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../WebSockets/" class="md-footer__link md-footer__link--next" aria-label="Next: WebSockets" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              WebSockets
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.8492ddcf.min.js"></script>
+      
+    
+  </body>
+</html>

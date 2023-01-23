@@ -1,0 +1,34 @@
+Type: "AWS::Cognito::UserPoolClient"
+Properties:
+  ClientName: awsome-food-app-web-client
+  GenerateSecret: False
+  SupportedIdentityProviders:
+    - "COGNITO"
+  AllowedOAuthFlowsUserPoolClient: true
+  AllowedOAuthFlows:
+    - "code"
+  CallbackURLs: 
+    - https://rashmisubhash.github.io/zomatoe-working/
+  LogoutURLs: 
+    - https://rashmisubhash.github.io/zomatoe-working/
+  DefaultRedirectURI: https://rashmisubhash.github.io/zomatoe-working/
+  PreventUserExistenceErrors: LEGACY
+  AllowedOAuthScopes:
+    - "phone"
+    - "email"
+    - "openid"
+    - "profile"
+    - "aws.cognito.signin.user.admin"
+  ReadAttributes:
+    - "email"
+    - "email_verified"
+    - "name"
+    - "address"
+    - "phone_number"
+  WriteAttributes:
+    - "name"
+    - "email"
+    - "address"
+    - "phone_number"
+  UserPoolId:
+    Ref: CognitoUserPool
